@@ -50,7 +50,7 @@ You'll also need testnet ETH and LINK. You can get LINK and ETH into your wallet
 
 You'll also need etherscan API key in order to verify the contracts . You can get instruction guide on getting your API Kes here [follow the instructions here](https://www.topcoder.com/thrive/articles/using-the-etherscan-api-and-bubble).
 
-You can add your environment variables to a `.env` file. You can use the [.env.exmple](https://github.com/yafiabiyyu/NFTEscrow/blob/main/.env.example) as a template, just fill in the values and rename it to '.env'.
+You can add your environment variables to a `.env` file. You can use the [.env.exmple](https://github.com/jefedcreator/Traveloor/blob/main/.env.example) as a template, just fill in the values and rename it to '.env'.
 
 Here is what your `.env` should look like:
 ```
