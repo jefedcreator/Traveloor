@@ -1,17 +1,3 @@
-# Sample Hardhat Project
-
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-GAS_REPORT=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
-
 # Traveloor
 
 Traveloor is a platform that can make it easier for users to purchase exclusive travel and vacation access in form of NFTs. Traveloor is an ERC1155 smart contract that handles five types of ERC721 Nfts: FLIGHT tickets, CRUISE tickets, HOTEL tickets, TRAIN tickets, and PREMIUM tickets which allows access to the other four NFTs, provided users have previously purchased an NFT, and for a slightly higher cost.
@@ -89,4 +75,4 @@ yarn hardhat run scripts/deploy.ts --network rinkeby
 
 ## License
 
-This project is licensed under the [MIT license](LICENSE).# Traveloor
+This project is licensed under the [MIT license](LICENSE).
