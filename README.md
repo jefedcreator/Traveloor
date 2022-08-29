@@ -8,7 +8,7 @@ Traveloor is a platform that can make it easier for users to purchase exclusive 
   - [Testnet Development](#testnet-development)
   - [Running Scripts and Deployment](#running-scripts-and-deployment)
     - [Setup Contract](#setup-contract)
-    - [Escrow Simulation](#escrow-simulation)
+    - [Thriftoor Simulation](#Thriftor-simulation-and-Testing)
   - [License](#license)
 
 ## Prerequisites
@@ -34,9 +34,9 @@ npm hardhat
 2. Download the project and install dependencies.
 
 ```bash
-git clone https://github.com/PatrickAlphaC/chainlink-mix
-cd chainlink-mix
-pip install -r requirements.txt
+git clone https://github.com/jefedcreator/Traveloor/
+cd Traveloor
+yarn install
 ```
 
 ## Testnet Development
@@ -70,8 +70,15 @@ DO NOT SEND YOUR PRIVATE KEY WITH FUNDS IN IT ONTO GITHUB
 
 This will deploy the smart contract to ropsten and verify it on the block explorer.
 ```bash
-yarn hardhat run scripts/deploy.ts --network rinkeby
+yarn hardhat run scripts/deploy.ts --network ropsten
 ```
+
+### Thriftor simulation and Testing
+This will deploy the smart contract to a loacal hardhat blockchain and run all its functions succesfully
+```bash
+yarn hardhat test test/traveloor.ts
+```
+
 
 ## License
 

@@ -32,11 +32,12 @@ contract Traveloor is ERC1155{
         _;
     }
 
-    modifier checkPremium() {
-        for (uint256 i = 0; i <= 4; i++) {
-            require(IERC1155(address(this)).balanceOf(msg.sender, i) > 1);   
+    function checkPremium() internal returns(bool) {
+        for (uint256 i = 0; i < 4; i++) {
+            if(IERC1155(address(this)).balanceOf(msg.sender, i) >= 1){
+                return true;
+            }   
         }
-        _;
     }
 
     function uri(uint collectionId, uint tokenId ) internal pure returns(string memory){
@@ -84,9 +85,10 @@ contract Traveloor is ERC1155{
         _mint(msg.sender, HOTEL, 1,"");
     }
 
-    function mintPremium() public checkPremium() payable{
+    function mintPremium() public payable{
         require(_premiumIdCounter.current() <= 5, "nft volume exceeded");
         require(msg.value == 0.3 ether, "insufficient ether");
+        require(checkPremium());
         uint tokenId = _premiumIdCounter.current();
         _premiumIdCounter.increment();
         _setURI(uri(PREMIUM,tokenId));
