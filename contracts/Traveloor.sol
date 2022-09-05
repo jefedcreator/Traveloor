@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract Traveloor is ERC1155{
+contract Traveloor is ERC1155 {
     using Counters for Counters.Counter;
     Counters.Counter private _flightIdCounter;
     Counters.Counter private _trainIdCounter;
@@ -13,7 +13,7 @@ contract Traveloor is ERC1155{
     Counters.Counter private _hotelIdCounter;
     Counters.Counter private _premiumIdCounter;
 
-    uint maximumNumOfTickets;
+    uint256 maximumNumOfTickets;
 
     uint256 public constant FLIGHT = 0;
     uint256 public constant CRUISE = 1;
@@ -21,7 +21,11 @@ contract Traveloor is ERC1155{
     uint256 public constant TRAIN = 3;
     uint256 public constant PREMIUM = 4;
 
-    constructor(uint _maxTickets) ERC1155("ipfs://Qmf6c4FJWRULNTQ4dWZ2zDEqpB16DwFWQGcyynrAwM6tut") {
+    mapping(uint256 => string) private _uris;
+
+    constructor(uint256 _maxTickets)
+        ERC1155("ipfs://Qmf6c4FJWRULNTQ4dWZ2zDEqpB16DwFWQGcyynrAwM6tut")
+    {
         maximumNumOfTickets = _maxTickets;
     }
 
@@ -30,67 +34,134 @@ contract Traveloor is ERC1155{
         _;
     }
 
-    modifier ifExceeded(uint _value) {
+    modifier ifExceeded(uint256 _value) {
         require(_value <= maximumNumOfTickets, "nft volume exceeded");
         _;
     }
 
-    function checkPremium() internal returns(bool) {
+    function checkPremium() internal view returns (bool) {
         for (uint256 i = 0; i < 4; i++) {
-            if(IERC1155(address(this)).balanceOf(msg.sender, i) >= 1){
+            if (balanceOf(msg.sender, i) >= 1) {
                 return true;
-            }   
+            }
         }
     }
 
-    function uri(uint collectionId, uint tokenId ) internal pure returns(string memory){
+    /**
+     * @dev sets uri for Token with collectionID in the format baseUri(uriHash)/_id.json
+     *
+     */
+    function createTokenUri(uint256 collectionId)
+        internal
+        pure
+        returns (string memory)
+    {
         return (
             string(
-                abi.encodePacked("ipfs://Qmf6c4FJWRULNTQ4dWZ2zDEqpB16DwFWQGcyynrAwM6tut/",
-                Strings.toString(collectionId),
-                "/",
-                Strings.toString(tokenId),
-                ".json"
+                abi.encodePacked(
+                    "ipfs://Qmf6c4FJWRULNTQ4dWZ2zDEqpB16DwFWQGcyynrAwM6tut/",
+                    Strings.toString(collectionId),
+                    ".json"
                 )
             )
-        ); 
+        );
     }
 
-    function mintFlight() public checkPrice() payable ifExceeded(_flightIdCounter.current()){
-        uint tokenId = _flightIdCounter.current();
+    /**
+     * @dev allow users to mint a flight ticket
+     * @notice ticket's availability is checked
+     */
+    function mintFlight()
+        public
+        payable
+        checkPrice
+        ifExceeded(_flightIdCounter.current())
+    {
         _flightIdCounter.increment();
-        _setURI(uri(FLIGHT,tokenId));
-        _mint(msg.sender, FLIGHT, 1,"");
+        if (bytes(_uris[FLIGHT]).length == 0) {
+            _uris[FLIGHT] = createTokenUri(FLIGHT);
+        }
+        _mint(msg.sender, FLIGHT, 1, "");
     }
 
-    function mintTrain() public checkPrice() payable ifExceeded(_trainIdCounter.current()){
-        uint tokenId = _trainIdCounter.current();
+    /**
+     * @dev allow users to mint a Train ticket
+     *  @notice ticket's availability is checked
+     */
+    function mintTrain()
+        public
+        payable
+        checkPrice
+        ifExceeded(_trainIdCounter.current())
+    {
         _trainIdCounter.increment();
-        _setURI(uri(TRAIN,tokenId));
-        _mint(msg.sender, TRAIN, 1,"");
+        if (bytes(_uris[TRAIN]).length == 0) {
+            _uris[TRAIN] = createTokenUri(TRAIN);
+        }
+        _mint(msg.sender, TRAIN, 1, "");
     }
 
-    function mintCruise() public checkPrice() payable ifExceeded(_cruiseIdCounter.current()){ 
-        uint tokenId = _cruiseIdCounter.current();
+    /**
+     * @dev allow users to mint a cruise ticket
+     *  @notice ticket's availability is checked
+     */
+    function mintCruise()
+        public
+        payable
+        checkPrice
+        ifExceeded(_cruiseIdCounter.current())
+    {
         _cruiseIdCounter.increment();
-        _setURI(uri(CRUISE,tokenId));
-        _mint(msg.sender, CRUISE, 1,"");
+
+        if (bytes(_uris[CRUISE]).length == 0) {
+            _uris[CRUISE] = createTokenUri(CRUISE);
+        }
+        _mint(msg.sender, CRUISE, 1, "");
     }
 
-    function mintHotel() public checkPrice() payable ifExceeded(_hotelIdCounter.current()){
-        uint tokenId = _hotelIdCounter.current();
+    /**
+     * @dev allow users to mint/book hotel
+     *  @notice ticket's availability is checked
+     */
+    function mintHotel()
+        public
+        payable
+        checkPrice
+        ifExceeded(_hotelIdCounter.current())
+    {
         _hotelIdCounter.increment();
-        _setURI(uri(HOTEL,tokenId));
-        _mint(msg.sender, HOTEL, 1,"");
+
+        if (bytes(_uris[HOTEL]).length == 0) {
+            _uris[HOTEL] = createTokenUri(HOTEL);
+        }
+        _mint(msg.sender, HOTEL, 1, "");
     }
 
-    function mintPremium() public payable ifExceeded(_premiumIdCounter.current()){
+    function mintPremium()
+        public
+        payable
+        ifExceeded(_premiumIdCounter.current())
+    {
         require(msg.value == 0.3 ether, "insufficient ether");
         require(checkPremium());
-        uint tokenId = _premiumIdCounter.current();
         _premiumIdCounter.increment();
-        _setURI(uri(PREMIUM,tokenId));
-        _mint(msg.sender, PREMIUM, 1,"");
+        if (bytes(_uris[PREMIUM]).length == 0) {
+            _uris[PREMIUM] = createTokenUri(PREMIUM);
+        }
+        _mint(msg.sender, PREMIUM, 1, "");
     }
 
+    /**
+     * @dev returns the uri for token with type _id
+     This have been overriden to return the specific uri for each token type instead of the baseUri
+    */
+    function uri(uint256 _id)
+        public
+        view
+        virtual
+        override(ERC1155)
+        returns (string memory)
+    {
+        return _uris[_id];
+    }
 }
